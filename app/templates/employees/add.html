@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Agregar Empleado</title>
+</head>
+<body>
+    <h1>Agregar Empleado</h1>
+    <form action="{{ url_for('employees.add') }}" method="post">
+
+        <label for="nameEmployee">Nombre del empleado:</label>
+        <input type="text" id="nameEmployee" name="nameEmployee" required>
+
+        <label for="telefonoEmployee">Telefono del empleado:</label>
+        <input type="text" id="telefonoEmployee" name="telefonoEmployee" required>
+
+        <label for="emailEmployee">Email del empleado:</label>
+        <input type="text" id="emailEmployee" name="emailEmployee" required>
+
+        <button type="submit">Agregar Empleado</button>
+        <a href="{{ url_for('employees.index') }}" id="enlace">Regresar</a>
+    </form>
+
+</body>
+</html>

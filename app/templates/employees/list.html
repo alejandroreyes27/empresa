@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Departamento</title>
+</head>
+<body>
+    <h1>Lista de Departamento</h1>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Acciones</th>
+        </tr>
+        {% for departments in data_departments %}
+            <tr>
+                <td>{{ departments.idDepartment }}</td  >
+                <td>{{ departments.nameDepartment }}</td>
+                <td>
+                    <a href="{{ url_for('departments.edit', id=departments.idDepartment) }}">Editar</a>
+                    <a href="{{ url_for('departments.delete', id=departments.idDepartment) }}">Eliminar</a>
+                    <a href="{{ url_for('departments.list', id=departments.idDepartment) }}">Listar</a>
+                    <!-- Agrega aquí el enlace para eliminar -->
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+    <a href="{{ url_for('departments.add') }}">Agregar Departamento</a>
+    <br>
+    <a href="{{ url_for('employees.index') }}">Ir a Empleados</a>
+</body>
+</html>

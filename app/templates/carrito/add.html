@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agregar Producto al Carrito</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='all.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='productos/index.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='icons/icon.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='carrito/add.css') }}">
+
+</head>
+<body>
+
+    <div class="header">
+        <!-- Botón de Hamburguesa -->
+        <div class="menu-toggle" id="menuToggle">
+            ☰
+        </div>
+    
+        <!-- Contenedor del Menú -->
+        <div class="nav-links" id="navLinks">
+            <a href="{{ url_for('productos.index') }}">Home</a>
+            <a href="{{ url_for('employees.index') }}">Empleados</a>
+            <a href="{{ url_for('departments.index') }}">Departamentos</a>
+            <a href="{{ url_for('carrito.index') }}">Carrito</a>
+            {% if current_user.rolUser == 'administrador': %}
+                <a href="{{ url_for('productos.add') }}">Add productos</a>
+                <a href="{{ url_for('auth.dashboard') }}">Usuarios registrados</a>
+            {% endif %}
+            <a href="{{ url_for('auth.logout') }}" class="w3-right">Cerrar Sesión</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="product-card">
+            <form action="{{ url_for('carrito.add', id=dataPro.idProducto) }}" method="post">
+                
+                <img src="{{ url_for('static', filename=dataPro.imagenProducto) }}" class="product-image" alt="{{ dataPro.nombreProducto }}">
+                
+                <div class="product-content">
+                    <h3 class="product-title">{{ dataPro.nombreProducto }}</h3>
+                    
+                    <div class="product-details">
+                        <div><strong>ID:</strong> {{ dataPro.idProducto }}</div>
+                        <div><strong>Precio:</strong> ${{ "%.2f"|format(dataPro.precioProducto|float) }}</div>
+                        <div><strong>Descripción:</strong> {{ dataPro.descripcionProducto }}</div>
+                        <div><strong>Categoría:</strong> {{ dataPro.categoria }}</div>
+                    </div>
+                    
+                    <div class="quantity-control">
+                        <button type="button" class="quantity-btn btn-danger" onclick="cambiarCantidad(-1, 'cantidad')">-</button>
+                        <input type="text" id="cantidad" name="cantidad" value="1" min="1" class="quantity-input" readonly>
+                        <button type="button" class="quantity-btn btn-success" onclick="cambiarCantidad(1, 'cantidad')">+</button>
+                    </div>
+                    
+                    <input type="hidden" name="idproducto" value="{{ dataPro.idProducto }}">
+                    <button type="submit" class="btn-add">Agregar al Carrito</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        function cambiarCantidad(valor, inputId) {
+            let input = document.getElementById(inputId);
+            let cantidad = parseInt(input.value) + valor;
+            if (cantidad < 1) cantidad = 1;
+            input.value = cantidad;
+        }
+    </script>
+
+    <script>
+        // Obtener elementos del DOM
+        const menuToggle = document.getElementById('menuToggle');
+        const navLinks = document.getElementById('navLinks');
+    
+        // Agregar evento al botón de hamburguesa
+        menuToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('active'); // Alternar la clase "active"
+        });
+    
+        // Opcional: Cerrar el menú al hacer clic fuera de él
+        document.addEventListener('click', (event) => {
+            if (!navLinks.contains(event.target) && !menuToggle.contains(event.target)) {
+                navLinks.classList.remove('active');
+            }
+        });
+    </script>
+
+</body>
+</html>

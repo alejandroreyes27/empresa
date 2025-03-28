@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Editar empleados vs Departamentos</title>
+</head>
+<body>
+    <h1>Editar Empleados Vs Departamentos</h1>
+    <form action="{{ url_for('departmentsEmployees.edit', eid=edata.idEmployee, did=ddata.idDepartment) }}" method="post">
+        <label for="idempleado">Empleados:</label>
+        <select id="idempleado" name="idempleado">
+            {% for empleado in empleadosdata %}        
+                {% if empleado == edata %}                                    
+                    <option value="{{ empleado.idEmployee }}" selected>{{ empleado.nameEmployee }}</option>
+                {%else%}
+                    <option value="{{ empleado.idEmployee }}">{{ empleado.nameEmployee }}</option>
+                {%endif%}
+            {% endfor %}
+        </select>
+        
+        <label for="iddepartamento">Departamento:</label>
+        <select id="iddepartamento" name="iddepartamento">
+            {% for departamento in departamentosdata %}
+                {% if departamento == ddata %}                                    
+                    <option selected value="{{ departamento.idDepartment }}" >{{ departamento.nameDepartment }}</option>
+                {%else%}
+                    <option value="{{ departamento.idDepartment }}">{{ departamento.nameDepartment }}</option>
+                {%endif%}
+            {% endfor %}
+        </select>
+        
+        <button type="submit">Editar relacion Empleado vs Departamento</button>
+        <a href="{{ url_for('departmentsEmployees.index') }}" id="enlace">Regresar</a> 
+    </form>
+</body>
+</html>

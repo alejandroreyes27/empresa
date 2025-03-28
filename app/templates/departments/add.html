@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Agregar Departamento</title>
+</head>
+<body>
+    <h1>Agregar Departamento</h1>
+    <form action="{{ url_for('departments.add') }}" method="post">
+        <label for="nameDepartment">Nombre del departamento:</label>
+        <input type="text" id="nameDepartment" name="nameDepartment" required>
+        
+        <button type="submit">Agregar Departamento</button>
+        <a href="{{ url_for('departments.index') }}" id="enlace">Regresar</a>
+    </form>
+</body>
+</html>

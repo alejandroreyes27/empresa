@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrito de Compras</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='all.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='productos/index.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='icons/icon.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='carrito/index.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+
+    <!-- Header -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <!-- Botón de Hamburguesa -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <!-- Contenedor del Menú -->
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('productos.index') }}">Home</a>
+                    </li>
+                    {% if current_user.rolUser == 'administrador': %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="material-icons">account_circle</i>
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" href="{{ url_for('categoria.add') }}">Categorías</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('auth.dashboard') }}">Usuarios Registrados</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('employees.index') }}">Empleados</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('departments.index') }}">Departamentos</a></li>
+                            </ul>
+                        </li>
+                    {% endif %}
+                    <!-- Ícono de Carrito -->
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('carrito.index') }}">
+                            <i class="material-icons">shopping_cart</i>
+                        </a>
+                    </li>
+                    {% if current_user.rolUser == 'administrador': %}
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="{{ url_for('productos.add') }}">Agregar Productos</a>
+                        </li>
+                    {% endif %}
+                    <!-- Filtro de Categorías -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-white" href="#" id="categoryDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Categoría:
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="categoryDropdown">
+                            <li><a class="dropdown-item" href="{{ url_for('productos.index') }}" data-categoria="">Todas las categorías</a></li>
+                            {% for categoria in categorias %}
+                                <li><a class="dropdown-item" href="{{ url_for('productos.index_categoria', id=categoria.idCategoria) }}" data-categoria="{{ categoria.idCategoria }}">{{ categoria.nombreCategoria }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                </ul>
+                <!-- Usuario y Cerrar Sesión -->
+                <span class="navbar-text text-white"> {{ current_user.nameUser }}</span>
+                <a href="{{ url_for('auth.logout') }}" class="btn btn-danger ms-2">Cerrar Sesión</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="w3-container w3-padding-32">
+        <h2 class="w3-center">🛒 Mi Carrito</h2>
+        
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            {% for message in messages %}
+              <div class="w3-panel w3-green">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+        
+        {% if data %}
+        <div class="product-grid">
+            {% for item in data %}
+            <div class="product-card" data-categoria="{{ item.producto.idCategoria }}">
+                <img src="{{ url_for('static', filename=item.producto.imagenProducto) }}" class="product-image" alt="Imagen del producto">
+                <div class="product-info">
+                    <h4>{{ item.producto.nombreProducto }}</h4>
+                    <p>Cantidad: {{ item.cantidad }}</p>
+                    <p>Precio Unitario: ${{ "%.0f"|format(item.producto.precioProducto)|replace(",", ".") }}</p>
+                    <p>Total: ${{ "%.0f"|format(item.cantidad * item.producto.precioProducto)|replace(",", ".") }}</p>
+                    <div class="actions">
+                        <!-- Botón para abrir el modal -->
+                        <button class="w3-button w3-blue open-edit-modal"
+                                data-id="{{ item.idCarrito }}"
+                                data-nombre="{{ item.producto.nombreProducto }}"
+                                data-precio="{{ '%.0f'|format(item.producto.precioProducto) }}"
+                                data-cantidad="{{ item.cantidad }}"
+                                data-imagen="{{ url_for('static', filename=item.producto.imagenProducto) }}">
+                            <i class="material-icons">mode_edit</i>
+                        </button>
+                        <!-- Formulario para eliminar el producto -->
+                        <form action="{{ url_for('carrito.delete', id=item.idCarrito) }}" method="POST">
+                            <button type="submit" onclick="return confirm('¿Seguro que deseas eliminar este producto?');">
+                                <i class="material-icons">delete</i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="centered-button">
+            <a href="{{ url_for('productos.index') }}" class="minimalist-button">Seguir Comprando</a>
+        </div>
+        {% else %}
+            <p class="w3-center empty-cart-message">Tu carrito está vacío 😢</p>
+            <div class="centered-button">
+                <a href="{{ url_for('productos.index') }}" class="minimalist-button">Explorar Productos</a>
+            </div>
+        {% endif %}
+    </div>
+    <br>
+    <div class="footer">
+        <p>&copy; 2025 Empresa. Todos los derechos reservados.</p>
+    </div>
+
+    <!-- Modal para Editar Producto -->
+    <div id="edit-cart-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="container">
+                <div class="product-card">
+                    <form id="edit-cart-form" method="POST">
+                        <!-- Imagen del producto -->
+                        <img id="edit-modal-imagen" class="product-image" alt="Imagen del producto">
+
+                        <!-- Contenido del producto -->
+                        <div class="product-content">
+                            <h3 id="edit-modal-nombre" class="product-title"></h3>
+                            <div class="product-details">
+                                <div><strong>Precio Unitario:</strong> $<span id="edit-modal-precio"></span></div>
+                            </div>
+
+                            <!-- Control de cantidad -->
+                            <div class="quantity-control">
+                                <button type="button" class="quantity-btn btn-danger" onclick="cambiarCantidad(-1, 'edit-modal-cantidad')">-</button>
+                                <input type="text" id="edit-modal-cantidad" name="cantidad" value="1" min="1" class="quantity-input" readonly>
+                                <button type="button" class="quantity-btn btn-success" onclick="cambiarCantidad(1, 'edit-modal-cantidad')">+</button>
+                            </div>
+
+                            <!-- Campo oculto para el ID del carrito -->
+                            <input type="hidden" id="edit-modal-idCarrito" name="idCarrito" value="">
+                            <button type="submit" class="btn-add">Guardar Cambios</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Menu hamburguesa
+        const menuToggle = document.getElementById('menuToggle');
+        const navLinks = document.getElementById('navLinks');
+
+        menuToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const filtroCategoria = document.getElementById('categoria-filtro');
+            const productosCarrito = document.querySelectorAll('.product-card');
+        
+            filtroCategoria.addEventListener('change', function () {
+                const categoriaSeleccionada = this.value;
+        
+                productosCarrito.forEach(producto => {
+                    const categoriaProducto = producto.getAttribute('data-categoria');
+        
+                    if (categoriaSeleccionada === '' || categoriaProducto == categoriaSeleccionada) {
+                        producto.style.display = 'block'; // Mostrar el producto
+                    } else {
+                        producto.style.display = 'none'; // Ocultar el producto
+                    }
+                });
+            });
+        });
+
+        // Modal para Editar Producto
+        const editModal = document.getElementById('edit-cart-modal');
+        const closeEditModal = document.querySelector('#edit-cart-modal .close-modal');
+        const openEditModalButtons = document.querySelectorAll('.open-edit-modal');
+        const editCartForm = document.getElementById('edit-cart-form');
+
+        // Abrir el modal y cargar los datos
+        openEditModalButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.preventDefault(); // Evita redirecciones
+
+                // Obtener datos del producto
+                const idCarrito = button.getAttribute('data-id');
+                const nombre = button.getAttribute('data-nombre');
+                const precio = button.getAttribute('data-precio');
+                const cantidad = button.getAttribute('data-cantidad');
+                const imagen = button.getAttribute('data-imagen');
+
+                // Rellenar el modal
+                document.getElementById('edit-modal-nombre').textContent = nombre;
+                document.getElementById('edit-modal-precio').textContent = precio;
+                document.getElementById('edit-modal-imagen').src = imagen;
+                document.getElementById('edit-modal-cantidad').value = cantidad;
+                document.getElementById('edit-modal-idCarrito').value = idCarrito;
+
+                // Mostrar el modal
+                editModal.style.display = 'block';
+            });
+        });
+
+        // Cerrar el modal
+        closeEditModal.addEventListener('click', () => {
+            editModal.style.display = 'none';
+        });
+
+        // Cerrar el modal al hacer clic fuera de él
+        window.addEventListener('click', (event) => {
+            if (event.target === editModal) {
+                editModal.style.display = 'none';
+            }
+        });
+
+        // Función para cambiar la cantidad
+        function cambiarCantidad(valor, inputId) {
+            let input = document.getElementById(inputId);
+            let cantidad = parseInt(input.value) + valor;
+            if (cantidad < 1) cantidad = 1; // Evita valores menores a 1
+            input.value = cantidad;
+        }
+
+        // Enviar el formulario mediante Fetch API
+        editCartForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(editCartForm);
+            const response = await fetch('{{ url_for("carrito.edit", id=0) }}'.replace('0', formData.get('idCarrito')), {
+                method: 'POST',
+                body: JSON.stringify({
+                    cantidad: formData.get('cantidad')
+                }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (response.ok) {
+                alert('✅ Cambios guardados correctamente');
+                window.location.reload(); // Recargar la página para reflejar los cambios
+            } else {
+                const errorData = await response.json();
+                console.error('Error al guardar los cambios:', errorData.message);
+                alert(`❌ Error al guardar los cambios: ${errorData.message}`);
+            }
+        });
+    </script>
+
+</body>
+</html>

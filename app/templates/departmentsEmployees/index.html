@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Relacion entre departamento y empleado</title>
+</head>
+<body>
+    <h1>Relacion entre departamento y empleado</h1>
+    <table>
+        <tr>
+            <th>ID Empleado</th>
+            <th>ID Departamento</th>
+            <th>Acciones</th>
+        </tr>
+        {% for departmentEmployee in data %}
+            <tr>
+                <td>{{ departmentEmployee.employee_id }}</td>
+                <td>{{ departmentEmployee.department_id }}</td>
+                <td>
+                    <a href="{{ url_for('departmentsEmployees.edit', did=departmentEmployee.department_id,eid=departmentEmployee.employee_id) }}">Editar</a>   
+                    <a href="{{ url_for('departmentsEmployees.delete', did=departmentEmployee.department_id,eid=departmentEmployee.employee_id) }}">Eliminar</a>
+                    <!-- Agrega aquí el enlace para eliminar -->
+                </td>
+            </tr>
+        {% endfor %}
+
+    </table>
+    <a href="{{ url_for('departmentsEmployees.add') }}">Agregar relacion empleado y departamento</a>
+    <br>
+    <a href="{{ url_for('employees.index') }}">Ir a Empleado</a>
+    <br>
+
+</body>
+</html>
