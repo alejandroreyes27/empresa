@@ -40,7 +40,8 @@ def create_app():
         from app.routes.DepartametsEmployes_routes import bp as departamets_employes_bp
         from app.routes.Productos_routes import bp as productos_bp
         from app.routes.Carrito_routes import bp as carrito_bp
-        from app.routes.Categoria_routes import bp as categoria_bp 
+        from app.routes.Categoria_routes import bp as categoria_bp
+        from app.routes.Facturacion_routes import bp as facturacion_bp
 
         app.register_blueprint(auth_bp)
         app.register_blueprint(departments_bp)
@@ -49,4 +50,5 @@ def create_app():
         app.register_blueprint(productos_bp)
         app.register_blueprint(carrito_bp)
         app.register_blueprint(categoria_bp)
+        app.register_blueprint(facturacion_bp)
     return app

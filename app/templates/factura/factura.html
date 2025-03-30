@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Factura #{{ factura.id }}</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    a {
+      display: inline-block;
+      margin-top: 20px;
+      text-decoration: none;
+      color: #428bca;
+    }
+  </style>
+</head>
+<body>
+  <h1>Factura #{{ factura.id }}</h1>
+  <p>Fecha: {{ factura.fecha.strftime('%d-%m-%Y') }}</p>
+  <table>
+    <tr>
+      <th>Producto</th>
+      <th>Cantidad</th>
+      <th>Precio Unitario</th>
+      <th>Subtotal</th>
+    </tr>
+    {% for detalle in factura.detalles %}
+    <tr>
+      <td>{{ detalle.producto.nombre }}</td>
+      <td>{{ detalle.cantidad }}</td>
+      <td>${{ detalle.precio_unitario }}</td>
+      <td>${{ detalle.subtotal }}</td>
+    </tr>
+    {% endfor %}
+    <tr>
+      <td colspan="3"><strong>Total</strong></td>
+      <td>${{ factura.total }}</td>
+    </tr>
+  </table>
+  <a href="{{ url_for('facturacion.descargar_factura_pdf', factura_id=factura.id) }}">
+    Descargar PDF
+  </a>
+</body>
+</html>
