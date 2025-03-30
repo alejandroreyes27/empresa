@@ -28,5 +28,6 @@ PyQtWebEngine==5.15.4
 python-lsp-jsonrpc==1.0.0
 SQLAlchemy==1.4.31
 webencodings==0.5.1
-Werkzeug==2.2.2
+Werkzeug==2.2.2 c
 Flask-WTF
+Flask-Migrate==2.7.0
