@@ -1,16 +1,17 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, send_file
 from flask_login import current_user, login_required
-from app.models.Factura import Factura, DetalleFactura  # Ajusta según tu estructura
+from app.models import Factura, DetalleFactura  # Ahora se importan desde __init__.py
 from app.models.Carrito import Carrito
 from app.models.Productos import Productos
 from app import db
 import pdfkit
 import io
 
-# Crear Blueprint con mayúscula inicial
-facturacion_bp = Blueprint('Facturacion', __name__)
 
-@facturacion_bp.route('/procesar-compra', methods=['POST'])
+# Crear Blueprint con mayúscula inicial
+bp = Blueprint('Facturacion', __name__)
+
+@bp.route('/procesar-compra', methods=['POST'])
 @login_required  # Solo usuarios autenticados pueden comprar
 def procesar_compra():
     # Verificar si el carrito está vacío
@@ -54,7 +55,7 @@ def procesar_compra():
         flash(f'Error al procesar la compra: {str(e)}', 'danger')
         return redirect(url_for('carrito.ver_carrito'))
     
-@facturacion_bp.route('/factura/<int:factura_id>')
+@bp.route('/factura/<int:factura_id>')
 @login_required
 def ver_factura(factura_id):
     factura = Factura.query.filter_by(id=factura_id, usuario_id=current_user.id).first()
@@ -64,7 +65,7 @@ def ver_factura(factura_id):
     
     return render_template('factura.html', factura=factura)
 
-@facturacion_bp.route('/factura/<int:factura_id>/pdf')
+@bp.route('/factura/<int:factura_id>/pdf')
 @login_required
 def descargar_factura_pdf(factura_id):
     factura = Factura.query.filter_by(id=factura_id, usuario_id=current_user.id).first()

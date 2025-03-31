@@ -1,60 +1,55 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Factura #{{ factura.id }}</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
-    th, td {
-      border: 1px solid #ddd;
-      padding: 8px;
-      text-align: left;
-    }
-    th {
-      background-color: #f2f2f2;
-    }
-    a {
-      display: inline-block;
-      margin-top: 20px;
-      text-decoration: none;
-      color: #428bca;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>Factura #{{ factura.id }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-  <h1>Factura #{{ factura.id }}</h1>
-  <p>Fecha: {{ factura.fecha.strftime('%d-%m-%Y') }}</p>
-  <table>
-    <tr>
-      <th>Producto</th>
-      <th>Cantidad</th>
-      <th>Precio Unitario</th>
-      <th>Subtotal</th>
-    </tr>
-    {% for detalle in factura.detalles %}
-    <tr>
-      <td>{{ detalle.producto.nombre }}</td>
-      <td>{{ detalle.cantidad }}</td>
-      <td>${{ detalle.precio_unitario }}</td>
-      <td>${{ detalle.subtotal }}</td>
-    </tr>
-    {% endfor %}
-    <tr>
-      <td colspan="3"><strong>Total</strong></td>
-      <td>${{ factura.total }}</td>
-    </tr>
-  </table>
-  <a href="{{ url_for('facturacion.descargar_factura_pdf', factura_id=factura.id) }}">
-    Descargar PDF
-  </a>
+    <div class="container mt-5">
+        <h1 class="mb-4">Factura #{{ factura.id }}</h1>
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Detalles de la Factura</h5>
+                <p><strong>Fecha:</strong> {{ factura.fecha.strftime('%d-%m-%Y %H:%M:%S') }}</p>
+                <p><strong>Estado de Pago:</strong> {{ factura.estado_pago }}</p>
+                
+                <table class="table table-bordered mt-3">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Cantidad</th>
+                            <th>Precio Unitario</th>
+                            <th>Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for detalle in factura.detalles %}
+                        <tr>
+                            <td>{{ detalle.producto.nombre }}</td>
+                            <td>{{ detalle.cantidad }}</td>
+                            <td>${{ '%0.2f'|format(detalle.precio_unitario) }}</td>
+                            <td>${{ '%0.2f'|format(detalle.subtotal) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th colspan="3" class="text-end">Total:</th>
+                            <th>${{ '%0.2f'|format(factura.total) }}</th>
+                        </tr>
+                    </tfoot>
+                </table>
+                
+                <div class="text-center mt-4">
+                    <a href="{{ url_for('Facturacion.descargar_factura_pdf', factura_id=factura.id) }}" 
+                       class="btn btn-primary">
+                        Descargar PDF
+                    </a>
+                    <a href="{{ url_for('main.index') }}" class="btn btn-secondary">Volver al Inicio</a>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
