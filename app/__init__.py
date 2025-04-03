@@ -1,13 +1,13 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
-from flask_migrate import Migrate  # Importar Flask-Migrate
+from flask_migrate import Migrate
 import os
 
 # Instanciamos las extensiones
 db = SQLAlchemy()
 login_manager = LoginManager()
-migrate = Migrate()  # Instanciamos Migrate
+migrate = Migrate()
 
 def create_app():
     app = Flask(__name__)
@@ -20,7 +20,7 @@ def create_app():
     login_manager.login_view = 'auth.login'
 
     # Inicializar Flask-Migrate
-    migrate.init_app(app, db)  # Esto es necesario para las migraciones
+    migrate.init_app(app, db)
 
     @login_manager.user_loader
     def load_user(idUser):
@@ -40,8 +40,12 @@ def create_app():
         from app.routes.DepartametsEmployes_routes import bp as departamets_employes_bp
         from app.routes.Productos_routes import bp as productos_bp
         from app.routes.Carrito_routes import bp as carrito_bp
-        from app.routes.Categoria_routes import bp as categoria_bp 
+        from app.routes.Categoria_routes import bp as categoria_bp
+        from app.routes.Facturacion_routes import bp as facturacion_bp  # Importación única del blueprint
 
+        # Importar Factura y DetalleFactura desde app.models (según la configuración en models/__init__.py)
+        from app.models import Factura, DetalleFactura
+    
         app.register_blueprint(auth_bp)
         app.register_blueprint(departments_bp)
         app.register_blueprint(employees_bp)
@@ -49,4 +53,6 @@ def create_app():
         app.register_blueprint(productos_bp)
         app.register_blueprint(carrito_bp)
         app.register_blueprint(categoria_bp)
+        app.register_blueprint(facturacion_bp)
+        
     return app

@@ -122,6 +122,11 @@
       <div class="total-selected-wrapper mt-4">
         Total Seleccionado: <span id="selected-total">$ 0</span>
       </div>
+      
+      <form action="{{ url_for('Facturacion.procesar_compra') }}" method="POST">
+        <button type="submit" class="btn btn-primary">Finalizar Compra</button>
+      </form>
+
     {% else %}
       <p class="text-center empty-cart-message">Tu carrito está vacío 😢</p>
       <div class="text-center mt-4">
